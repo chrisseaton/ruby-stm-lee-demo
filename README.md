@@ -197,6 +197,8 @@ Works on at least:
 
 ## Performance
 
+We don't think there's much point looking at the performance of `TVar` in MRI yet - it's experimental. But it's interesting to compare Ruby implementations on the sequential solver. We can see how JRuby is 2x faster, and TruffleRuby is an order of magnitude faster.
+
 | Ruby | Result | Relative speedup |
 |--|--|--|
 | `ruby 2.7.2p137 (2020-10-01 revision 5445e04352) [x86_64-darwin19]` | 0.918  (± 0.0%) i/s | 1.00x |
