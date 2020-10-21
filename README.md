@@ -195,6 +195,16 @@ Works on at least:
 * JRuby 9.2.13.0
 * TruffleRuby 20.2.0
 
+## Performance
+
+`ruby 2.7.2p137 (2020-10-01 revision 5445e04352) [x86_64-darwin19]` 0.918  (± 0.0%) i/s - 1.00x
+`ruby 2.7.2p137 (2020-10-01 revision 5445e04352) +JIT [x86_64-darwin19]` 1.101  (± 0.0%) i/s - 1.20x
+`ruby 3.0.0dev (2020-10-12T07:16:50Z thread_tvar 66e45dc50c) [x86_64-darwin19]` 0.836  (± 0.0%) i/s - 0.91x
+`jruby 9.2.13.0 (2.5.7) 2020-08-03 9a89c94bcc OpenJDK 64-Bit Server VM 25.252-b14 on 1.8.0_252-b14 +jit [darwin-x86_64]` 2.002  (± 0.0%) i/s - 2.18x
+`jruby 9.2.13.0 (2.5.7) 2020-08-03 9a89c94bcc OpenJDK 64-Bit Server VM 25.252-b14 on 1.8.0_252-b14 +indy +jit [darwin-x86_64]` 2.549  (± 0.0%) i/s - 2.78x
+`truffleruby 20.2.0, like ruby 2.6.6, GraalVM CE Native [x86_64-darwin]` 11.238  (±26.7%) i/s - 12.24x
+`truffleruby 20.2.0, like ruby 2.6.6, GraalVM CE JVM [x86_64-darwin]` 9.475  (±10.6%) i/s - 10.32x
+
 ## Author
 
 Written by Chris Seaton at Shopify, chris.seaton@shopify.com.
