@@ -2,7 +2,6 @@
 # which are checked against each other for conflicts, drawing intermediate
 # results.
 
-require 'matrix'
 require 'set'
 
 require_relative 'lib/lee'
