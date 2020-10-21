@@ -1,3 +1,5 @@
+# Solves a board using TVar actually on two uncontrolled concurrent threads.
+
 require 'matrix'
 require 'set'
 
@@ -18,6 +20,8 @@ obstructed = Matrix.zero(board.height, board.width)
 board.pads.each do |pad|
   obstructed[pad.y, pad.x] = 1
 end
+
+# Would be good if we could have TArray and TMatrix instead of a Matrix of TVars!
 
 depth = Matrix.zero(board.height, board.width)
 (0...board.height).each do |y|
@@ -90,19 +94,20 @@ end
 
 solutions = {}
 
-$lock = Mutex.new
 $committed = 0
 $aborted = 0
 
 class Thread
+  LOG_LOCK = Mutex.new
+
   def self.committed
-    $lock.synchronize do
+    LOG_LOCK.synchronize do
       $committed += 1
     end
   end
 
   def self.aborted
-    $lock.synchronize do
+    LOG_LOCK.synchronize do
       $aborted += 1
     end
   end
@@ -130,7 +135,7 @@ threads = 2.times.map {
 
 threads.each &:join
 
-raise 'invalid solution' unless Lee.validate_solution(board, solutions)
+raise 'invalid solution' unless Lee.solution_valid?(board, solutions)
 
 cost, depth = Lee.cost_solutions(board, solutions)
 puts "routes:      #{board.routes.size}"

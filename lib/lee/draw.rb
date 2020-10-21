@@ -1,5 +1,6 @@
 module Lee
 
+  # Draw a board and possibly solutions and expansions.
   def self.draw(board, solutions, expansions=[], filename)
     require 'victor'
 
@@ -11,7 +12,7 @@ module Lee
 
     expansion_colours = %w(566E3D DB2B39)
 
-    scale = 600.0 / board.width
+    scale = 600.0 / board.width # Always around 600 is a good size - scale up or down to meet that.
     pad_radius = scale * 0.5
     line_width = scale * 0.5
     svg = Victor::SVG.new(width: board.width*scale, height: board.height*scale)
@@ -30,7 +31,7 @@ module Lee
 
     solutions.each do |solution|
       colour = solution_colours[solution.hash % solution_colours.size]
-      
+
       svg.polyline points: solution.map { |p| "#{p.x*scale + scale/2},#{p.y*scale + scale/2}"}.join(' '),
                    stroke: "##{colour}",
                    stroke_width: line_width,

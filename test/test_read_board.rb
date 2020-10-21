@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 
-require_relative '../lib/board'
+require_relative '../lib/lee'
 
 class TestReadBoard < Minitest::Test
   def test_read_all_boards

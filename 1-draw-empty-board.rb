@@ -1,3 +1,5 @@
+# Draws an empty board with no solutions.
+
 require_relative 'lib/lee'
 
 board_filename, output_filename, *rest = ARGV

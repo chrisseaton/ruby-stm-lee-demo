@@ -1,3 +1,7 @@
+# Solves a board, two routes at a time, applying the two routes in transactions
+# which are checked against each other for conflicts, drawing intermediate
+# results.
+
 require 'matrix'
 require 'set'
 
@@ -152,7 +156,7 @@ until worklist.empty?
   counter += 1
 end
 
-raise 'invalid solution' unless Lee.validate_solution(board, solutions)
+raise 'invalid solution' unless Lee.solution_valid?(board, solutions)
 
 cost, depth = Lee.cost_solutions(board, solutions)
 puts "routes:      #{board.routes.size}"

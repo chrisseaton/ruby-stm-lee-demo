@@ -1,12 +1,14 @@
 module Lee
 
-  def self.validate_board(board)
+  # Is a board valid? With all pads and routes within the bounds of the board.
+  def self.board_valid?(board)
     board.pads.all? { |pad| point_on_board?(board, pad) } &&
       board.routes.all? { |route| route_on_board?(board, route) }
   end
 
-  def self.validate_solution(board, solutions)
-    return false unless validate_board(board)
+  # Are the board and all solutions valid? With solutions continuous and matching the route.
+  def self.solution_valid?(board, solutions)
+    return false unless board_valid?(board)
     board.routes.all? { |route|
       solution = solutions[route]
       return false unless solution

@@ -1,9 +1,12 @@
 module Lee
 
+  # What is the cost of adding a new route on top of existing routes of a given depth?
   def self.cost(depth)
+    # The cost is exponential - getting taller gets more expensive more quickly as the depth increases.
     2**depth
   end
 
+  # How much does a set of solutions cost overall? And what's the max depth?
   def self.cost_solutions(board, solutions)
     depth = {}
     depth.default = 0

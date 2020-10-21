@@ -3,15 +3,15 @@
 ## Usage
 
 ```
-% ruby 1-draw-empty-board.rb inputs/testBoard.txt testBoard.svg   
+% ruby 1-draw-empty-board.rb inputs/testBoard.txt testBoard.svg
 routes: 203
 
-% ruby 2-expensive-solution.rb inputs/testBoard.txt testBoard.svg 
+% ruby 2-expensive-solution.rb inputs/testBoard.txt testBoard.svg
 routes: 203
 cost:   4168
 depth:  5
 
-% ruby 3-sequential-lee.rb inputs/testBoard.txt testBoard.svg 
+% ruby 3-sequential-lee.rb inputs/testBoard.txt testBoard.svg
 routes: 203
 cost:   3304
 depth:  3
@@ -29,12 +29,12 @@ depth:       3
 You'll need to use a build of the `thread_tvar` branch of MRI, with `instrument-atomically.patch` which applies cleanly on top of at least `66e45dc50c05d5030c8f9663bb159b8e2014d8ff`, in order to run the next two commands.
 
 ```
-% ruby 5-sequential-tvar-lee.rb inputs/testBoard.txt testBoard.svg 
+% ruby 5-sequential-tvar-lee.rb inputs/testBoard.txt testBoard.svg
 routes:      203
 cost:        3304
 depth:       3
 
-% ruby 6-concurrent-tvar-lee.rb inputs/testBoard.txt testBoard.svg 
+% ruby 6-concurrent-tvar-lee.rb inputs/testBoard.txt testBoard.svg
 routes:      203
 committed:   203
 aborted:     7

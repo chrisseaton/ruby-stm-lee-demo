@@ -1,3 +1,5 @@
+# Solves a board using Lee but sequentially.
+
 require 'matrix'
 
 require_relative 'lib/lee'
@@ -91,7 +93,7 @@ board.routes.each do |route|
   solutions[route] = solution
 end
 
-raise 'invalid solution' unless Lee.validate_solution(board, solutions)
+raise 'invalid solution' unless Lee.solution_valid?(board, solutions)
 
 cost, depth = Lee.cost_solutions(board, solutions)
 puts "routes: #{board.routes.size}"

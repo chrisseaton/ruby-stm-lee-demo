@@ -1,3 +1,6 @@
+# Does a brute force solution not caring that pads are obstacles and not caring
+# about cost.
+
 require_relative 'lib/lee'
 
 board_filename, output_filename, *rest = ARGV
@@ -9,9 +12,7 @@ board = Lee.read_board(board_filename)
 solutions = {}
 
 board.routes.each do |route|
-  solution = []
-
-  solution.push route.a
+  solution = [route.a]
 
   x = route.a.x
   y = route.a.y
@@ -31,7 +32,7 @@ board.routes.each do |route|
   solutions[route] = solution
 end
 
-raise 'invalid solution' unless Lee.validate_solution(board, solutions)
+raise 'invalid solution' unless Lee.solution_valid?(board, solutions)
 
 cost, depth = Lee.cost_solutions(board, solutions)
 puts "routes: #{board.routes.size}"

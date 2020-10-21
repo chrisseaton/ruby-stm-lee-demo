@@ -1,3 +1,5 @@
+# Solves a board sequentially but using TVar in a single thread.
+
 require 'matrix'
 require 'set'
 
@@ -99,7 +101,7 @@ board.routes.each do |route|
    end
 end
 
-raise 'invalid solution' unless Lee.validate_solution(board, solutions)
+raise 'invalid solution' unless Lee.solution_valid?(board, solutions)
 
 cost, depth = Lee.cost_solutions(board, solutions)
 puts "routes:      #{board.routes.size}"

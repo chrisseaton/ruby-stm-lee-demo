@@ -1,9 +1,15 @@
 module Lee
 
+  # A point is a location on the board.
   Point = Struct.new(:x, :y)
+
+  # A route is two points that we want to connect. It's a route to solve, not a route that has been solved.
   Route = Struct.new(:a, :b)
+
+  # A board has a width, height, an array of pads, and an array of routes to solve.
   Board = Struct.new(:width, :height, :pads, :routes)
 
+  # Read a board from a file.
   def self.read_board(filename)
     width = nil
     height = nil
@@ -40,7 +46,7 @@ module Lee
     routes.shuffle! random: Random.new(0)
 
     board = Board.new(width, height, pads, routes)
-    raise 'invalid board' unless validate_board(board)
+    raise 'invalid board' unless board_valid?(board)
     board
   end
 
