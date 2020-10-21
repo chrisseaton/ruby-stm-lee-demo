@@ -186,6 +186,15 @@ A surprisingly large read-set for a small route, showing how unpredictable the a
 
 <img src="examples/large-expansion.svg" width="50%">
 
+## Compatibility
+
+Works on at least:
+
+* MRI 2.7.2
+* MRI `66e45dc50c05d5030c8f9663bb159b8e2014d8ff` + patch
+* JRuby 9.2.13.0
+* TruffleRuby 20.2.0
+
 ## Author
 
 Written by Chris Seaton at Shopify, chris.seaton@shopify.com.

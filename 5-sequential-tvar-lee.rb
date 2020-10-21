@@ -1,6 +1,5 @@
 # Solves a board sequentially but using TVar in a single thread.
 
-require 'matrix'
 require 'set'
 
 require_relative 'lib/lee'
@@ -16,24 +15,19 @@ end
 
 board = Lee.read_board(board_filename)
 
-obstructed = Matrix.zero(board.height, board.width)
+obstructed = Lee::Matrix.new(board.height, board.width)
 board.pads.each do |pad|
   obstructed[pad.y, pad.x] = 1
 end
 
-depth = Matrix.zero(board.height, board.width)
-(0...board.height).each do |y|
-  (0...board.width).each do |x|
-    depth[y, x] = Thread::TVar.new(0)
-  end
-end
+depth = Lee::Matrix.new(board.height, board.width) { Thread::TVar.new(0) }
 
 def expand(board, obstructed, depth, route)
   start_point = route.a
   end_point = route.b
 
   # From benchmarking - we're better of allocating a new cost-matrix each time rather than zeroing
-  cost = Matrix.zero(board.height, board.width)
+  cost = Lee::Matrix.new(board.height, board.width)
   cost[start_point.y, start_point.x] = 1
 
   wavefront = [start_point]
@@ -88,7 +82,7 @@ end
 solutions = {}
 
 board.routes.each do |route|
-  Thread::atomically do
+  Thread.atomically do
     cost = expand(board, obstructed, depth, route)
     solution = solve(board, route, cost)
 

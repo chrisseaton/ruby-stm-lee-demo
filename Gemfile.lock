@@ -5,6 +5,7 @@ GEM
     victor (0.3.2)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES

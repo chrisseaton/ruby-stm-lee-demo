@@ -18,19 +18,19 @@ end
 
 board = Lee.read_board(board_filename)
 
-obstructed = Matrix.zero(board.height, board.width)
+obstructed = Lee::Matrix.new(board.height, board.width)
 board.pads.each do |pad|
   obstructed[pad.y, pad.x] = 1
 end
 
-depth = Matrix.zero(board.height, board.width)
+depth = Lee::Matrix.new(board.height, board.width)
 
 def expand(board, obstructed, depth, route)
   start_point = route.a
   end_point = route.b
 
   # From benchmarking - we're better of allocating a new cost-matrix each time rather than zeroing
-  cost = Matrix.zero(board.height, board.width)
+  cost = Lee::Matrix.new(board.height, board.width)
   cost[start_point.y, start_point.x] = 1
 
   read_set = Set.new
