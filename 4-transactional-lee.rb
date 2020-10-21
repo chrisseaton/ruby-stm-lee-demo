@@ -94,7 +94,7 @@ overlaps = 0
 conflicts = 0
 spare = 0
 
-counter = 1000
+counter = 10000
 
 until worklist.empty?
   a = worklist.shift
@@ -168,7 +168,10 @@ puts "cost:        #{cost}"
 puts "depth:       #{depth}"
 
 if expansions_dir
-  Lee.draw board, solutions.values, File.join(expansions_dir, "#{counter}-final.svg")
+  100.times do
+    Lee.draw board, solutions.values, File.join(expansions_dir, "#{counter}-final.svg")
+    counter += 1
+  end
 end
 
 Lee.draw board, solutions.values, output_filename if output_filename

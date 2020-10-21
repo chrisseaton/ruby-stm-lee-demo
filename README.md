@@ -1,22 +1,26 @@
 # Ruby STM Lee Demo
 
+<img src="examples/testBoard.gif" width="50%">
+
+This is a demo of using *Software Transactional Memory*, or *STM*, in Ruby to parallelise an algorithm for routing circuits called *Lee's Algorithm*. It shows some interesting points for discussion.
+
 ## Usage
 
 ```
-% ruby 1-draw-empty-board.rb inputs/testBoard.txt testBoard.svg
+% bundle exec ruby 1-draw-empty-board.rb inputs/testBoard.txt testBoard.svg
 routes: 203
 
-% ruby 2-expensive-solution.rb inputs/testBoard.txt testBoard.svg
+% bundle exec ruby 2-expensive-solution.rb inputs/testBoard.txt testBoard.svg
 routes: 203
 cost:   4168
 depth:  5
 
-% ruby 3-sequential-lee.rb inputs/testBoard.txt testBoard.svg
+% bundle exec ruby 3-sequential-lee.rb inputs/testBoard.txt testBoard.svg
 routes: 203
 cost:   3304
 depth:  3
 
-% ruby 4-transactional-lee.rb inputs/testBoard.txt testBoard.svg testBoard-expansions
+% bundle exec ruby 4-transactional-lee.rb inputs/testBoard.txt testBoard.svg testBoard-expansions
 routes:      203
 independent: 79
 overlaps:    9
@@ -29,12 +33,12 @@ depth:       3
 You'll need to use a build of the `thread_tvar` branch of MRI, with `instrument-atomically.patch` which applies cleanly on top of at least `66e45dc50c05d5030c8f9663bb159b8e2014d8ff`, in order to run the next two commands.
 
 ```
-% ruby 5-sequential-tvar-lee.rb inputs/testBoard.txt testBoard.svg
+% bundle exec ruby 5-sequential-tvar-lee.rb inputs/testBoard.txt testBoard.svg
 routes:      203
 cost:        3304
 depth:       3
 
-% ruby 6-concurrent-tvar-lee.rb inputs/testBoard.txt testBoard.svg
+% bundle exec ruby 6-concurrent-tvar-lee.rb inputs/testBoard.txt testBoard.svg
 routes:      203
 committed:   203
 aborted:     7
@@ -56,6 +60,132 @@ You can also make an animated GIF.
 % convert -scale 250 -delay 10 -loop 1 testBoard-expansions/*.png testBoard.gif
 ```
 
+## Inputs
+
+#### `minimal.txt`
+
+Simple enough to reason about manually. Two crossing routes. Note how the algorithm does not find the lowest-cost solution!
+
+<img src="examples/minimal.svg" width="50%">
+
+```
+routes:      2
+independent: 0
+overlaps:    0
+conflicts:   1
+spare:       1
+cost:        24
+depth:       2
+```
+
+#### `testBoard.txt`
+
+A small but realistic board.
+
+<img src="examples/testBoard.svg" width="50%">
+
+```
+routes:      203
+independent: 79
+overlaps:    9
+conflicts:   27
+spare:       0
+cost:        3307
+depth:       3
+```
+
+#### `memboard.txt`
+
+A memory module, so many shorter routes.
+
+<img src="examples/memboard.svg" width="50%">
+
+```
+routes:      3101
+independent: 1459
+overlaps:    41
+conflicts:   100
+spare:       1
+cost:        162917
+depth:       3
+```
+
+#### `mainboard.txt`
+
+A processor module, so more longer routes.
+
+<img src="examples/mainboard.svg" width="50%">
+
+```
+routes:      1506
+independent: 630
+overlaps:    34
+conflicts:   177
+spare:       1
+cost:        174128
+depth:       3
+```
+
+#### `sparselong.txt`
+
+Very long routes, which will likely conflict.
+
+<img src="examples/sparselong.svg" width="50%">
+
+```
+routes:      29
+independent: 0
+overlaps:    0
+conflicts:   28
+spare:       1
+cost:        16849
+depth:       1
+```
+
+#### `sparseshort.txt`
+
+Very short routes, which will likely not conflict.
+
+<img src="examples/sparseshort.svg" width="50%">
+
+```
+routes:      841
+independent: 419
+overlaps:    1
+conflicts:   1
+spare:       0
+cost:        9251
+depth:       1
+```
+
+### Sources
+
+Inputs are from http://apt.cs.manchester.ac.uk/projects/TM/LeeBenchmark/, who in turn got them from Spiers [1]. They're described as 'typical production' boards but we're not sure where exactly they came from
+
+> Unless otherwise mentioned, the code copyright is held by the University of Manchester, and the code is provided "as is" without any guarantees of any kind and is distributed as open source under a BSD license.
+
+`inputs/minimal.txt` by Chris Seaton.
+
+[1] T D Spiers and D A Edwards. A high performance routing engine. In Proceedings of the 24th ACM/IEEE conference on Design Automation, pages 793–799, 1987.
+
+## Example transactions
+
+Two clearly independent routes that can be solved completely in parallel.
+
+<img src="examples/clearly-independent.svg" width="50%">
+
+Two routes that overlap in what they read, but not what they write, so can be solved in parallel.
+
+<img src="examples/overlaps.svg" width="50%">
+
+A massive conflict, that could never be solved in parallel.
+
+<img src="examples/massive-conflict.svg" width="50%">
+
+A surprisingly large read-set for a small route, showing how unpredictable the area required is.
+
+<img src="examples/large-expansion.svg" width="50%">
+
 ## Author
 
 Written by Chris Seaton at Shopify, chris.seaton@shopify.com.
@@ -63,15 +193,3 @@ Written by Chris Seaton at Shopify, chris.seaton@shopify.com.
 ## License
 
 MIT
-
-## Inputs
-
-Inputs are from http://apt.cs.manchester.ac.uk/projects/TM/LeeBenchmark/.
-
-> Unless otherwise mentioned, the code copyright is held by the University of Manchester, and the code is provided "as is" without any guarantees of any kind and is distributed as open source under a BSD license.
-
-[1] Ian Watson, Chris Kirkham and Mikel Luján. A Study of a Transactional Parallel Routing Algorithm. In Proceedings of the 16th International Conference on Parallel Architectures and Compilation Techniques (PACT 2007), Brasov, Romania, Sept. 2007, pp 388-398.
-
-[2] Mohammad Ansari, Christos Kotselidis, Kim Jarvis, Mikel Luján, Chris Kirkham, and Ian Watson. Lee-TM: A Non-trivial Benchmark for Transactional Memory. In Proceedings of the 8th International Conference on Algorithms and Architectures for Parallel Processing (ICA3PP 2008), Aiya Napa, Cyprus, June 2008.
-
-`inputs/minimal.txt` by Chris Seaton.

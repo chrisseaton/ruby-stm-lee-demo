@@ -10,7 +10,7 @@ module Lee
       solution_colours = %w(4A4A4A 828282 8F8F8F 575757)
     end
 
-    expansion_colours = %w(566E3D DB2B39)
+    expansion_colours = %w(2E5266 FE9920)
 
     scale = 600.0 / board.width # Always around 600 is a good size - scale up or down to meet that.
     pad_radius = scale * 0.5
@@ -19,18 +19,32 @@ module Lee
 
     expansions.zip(expansion_colours).each do |(expansion, solution), colour|
       expansion.each do |point|
-        svg.rect x: point.x*scale,
-                 y: point.y*scale,
-                 width: scale,
-                 height: scale,
+        svg.rect x: point.x*scale + 0.1*scale,
+                 y: point.y*scale + 0.1*scale,
+                 width: scale - 0.2*scale,
+                 height: scale - 0.2*scale,
                  stroke: 'none',
                  fill: "##{colour}",
                  opacity: 0.5
       end
     end
 
-    solutions.each do |solution|
-      colour = solution_colours[solution.hash % solution_colours.size]
+    expansions.map(&:first).reduce(&:intersection)&.each do |overlap|
+      svg.rect x: overlap.x*scale + 0.1*scale,
+               y: overlap.y*scale + 0.1*scale,
+               width: scale - 0.2*scale,
+               height: scale - 0.2*scale,
+               stroke: 'none',
+               fill: 'red'
+    end
+
+    solutions.each_with_index do |solution, i|
+      if solutions.size <= solution_colours.size
+        # Don't want the minimal board getting the same colours for both routes!
+        colour = solution_colours[i]
+      else
+        colour = solution_colours[solution.hash % solution_colours.size]
+      end
 
       svg.polyline points: solution.map { |p| "#{p.x*scale + scale/2},#{p.y*scale + scale/2}"}.join(' '),
                    stroke: "##{colour}",
