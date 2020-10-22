@@ -67,7 +67,9 @@ def solve(board, route, cost)
 
   loop do
     adjacent = Lee.adjacent(board, solution.last)
-    lowest_cost = adjacent.reject { |adjacent| cost[adjacent.y, adjacent.x].zero? }.min_by { |adjacent| cost[adjacent.y, adjacent.x] }
+    lowest_cost = adjacent
+      .reject { |a| cost[a.y, a.x].zero? }
+      .min_by { |a| cost[a.y, a.x] }
     solution.push lowest_cost
     break if lowest_cost == end_point
   end
