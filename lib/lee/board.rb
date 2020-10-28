@@ -13,7 +13,7 @@ module Lee
   def self.read_board(filename)
     width = nil
     height = nil
-    pads = []
+    pads = Set.new
     routes = []
 
     File.open(filename) do |file|
@@ -27,11 +27,15 @@ module Lee
         when 'P'
           _, x, y, *rest = tokens
           raise 'bad P line command' unless rest.empty? && ![x, y].any?(&:nil?)
-          pads.push Point.new(x, y)
+          pads.add Point.new(x, y)
         when 'J'
           _, ax, ay, bx, by, *rest = tokens
           raise 'bad J line command' unless rest.empty? && ![ax, ay, bx, by].any?(&:nil?)
-          routes.push Route.new(Point.new(ax, ay), Point.new(bx, by))
+          a = Point.new(ax, ay)
+          b = Point.new(bx, by)
+          pads.add a
+          pads.add b
+          routes.push Route.new(a, b)
         when 'E'
           break
         else
@@ -45,7 +49,7 @@ module Lee
     # Deterministically shuffle the routes to reduce obvious conflicts
     routes.shuffle! random: Random.new(0)
 
-    board = Board.new(width, height, pads, routes)
+    board = Board.new(width, height, pads.to_a, routes)
     raise 'invalid board' unless board_valid?(board)
     board
   end
