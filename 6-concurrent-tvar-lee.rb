@@ -119,7 +119,7 @@ threads = 2.times.map {
         solution = solve(board, route, cost)
 
         if expansions_dir
-        Lee.draw board, solutions.values, [[cost.keys, solution]], File.join(expansions_dir, "expansion-#{route.object_id}.svg")
+          Lee.draw board, solutions.values, [[cost.keys, solution]], File.join(expansions_dir, "expansion-#{route.object_id}.svg")
         end
 
         lay depth, solution
