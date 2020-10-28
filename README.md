@@ -57,7 +57,7 @@ The SVGs produced aren't very efficient I'm afraid. You may be better off conver
 You can also make an animated GIF.
 
 ```
-% convert -scale 250 -delay 10 -loop 1 testBoard-expansions/*.png testBoard.gif
+% convert -transparent white -dispose previous -scale 250 -delay 10 -loop 1 testBoard-expansions/*.png testBoard.gif
 ```
 
 ## Inputs
@@ -199,7 +199,11 @@ Works on at least:
 
 We don't think there's much point looking at the performance of `TVar` in MRI yet - it's experimental. But it's interesting to compare Ruby implementations on the sequential solver. We can see how JRuby is 2x faster, and TruffleRuby is an order of magnitude faster.
 
-| Ruby | Result | Relative speedup |
+```
+% bundle exec ruby -v bench/sequential.rb
+```
+
+| Ruby | Result | Relative speed |
 |--|--|--|
 | `ruby 2.7.2p137 (2020-10-01 revision 5445e04352) [x86_64-darwin19]` | 0.918  (± 0.0%) i/s | 1.00x |
 | `ruby 2.7.2p137 (2020-10-01 revision 5445e04352) +JIT [x86_64-darwin19]` | 1.101  (± 0.0%) i/s | 1.20x |
