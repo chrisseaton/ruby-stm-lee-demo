@@ -30,7 +30,7 @@ cost:        3307
 depth:       3
 ```
 
-You'll need to use a build of the `thread_tvar` branch of MRI, with `instrument-atomically.patch` which applies cleanly on top of at least `66e45dc50c05d5030c8f9663bb159b8e2014d8ff`, in order to run the next two commands.
+You'll need to use a build of the `thread_tvar` branch from [this PR](https://github.com/ruby/ruby/pull/3652), with `instrument-atomically.patch` which applies cleanly on top of at least `66e45dc50c05d5030c8f9663bb159b8e2014d8ff`, in order to run the next two commands.
 
 ```
 % bundle exec ruby 5-sequential-tvar-lee.rb inputs/testBoard.txt testBoard.svg

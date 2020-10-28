@@ -1,4 +1,4 @@
-# Solves a board using TVar actually on two uncontrolled concurrent threads.
+# Solves a board using TVar on multiple Ractors.
 
 require 'set'
 
@@ -83,36 +83,71 @@ def lay(depth, solution)
   end
 end
 
-worklist = Queue.new
-board.routes.each do |route|
-  worklist.push route
+worklist = Ractor.new do
+  loop do
+    Ractor.yield receive
+  end
+  close
 end
 
-solutions = {}
+board.routes.each do |route|
+  worklist << route
+end
+worklist.close_incoming
 
-$committed = 0
-$aborted = 0
+class Counter
+  def initialize
+    @ractor = Ractor.new do
+      count = 0
+      loop do
+        count += receive
+      end
+      count
+    end
+    Ractor.make_shareable(self)
+  end
+
+  def increment
+    @ractor << 1
+  end
+
+  def count
+    @ractor.close_incoming
+    @ractor.take
+  end
+end
+
+COMMITTED = Counter.new
+ABORTED = Counter.new
 
 class Thread
-  LOG_LOCK = Mutex.new
-
   def self.committed
-    LOG_LOCK.synchronize do
-      $committed += 1
-    end
+    COMMITTED.increment
   end
 
   def self.aborted
-    LOG_LOCK.synchronize do
-      $aborted += 1
-    end
+    ABORTED.increment
   end
 end
 
-threads = 2.times.map {
-  Thread.new {
+solutions_ractor = Ractor.new {
+  solutions = {}
+  loop do
+    key, value = Ractor.receive
+    solutions[key] = value
+  end
+  Ractor.make_shareable(solutions)
+}
+
+N = Integer(ENV["N"] || 2)
+
+Ractor.make_shareable([board, obstructed, depth])
+
+ractors = N.times.map {
+  Ractor.new(worklist, board, obstructed, depth, solutions_ractor, expansions_dir) {
+            |worklist, board, obstructed, depth, solutions_ractor, expansions_dir|
     loop do
-      route = worklist.pop(non_block: true) rescue break
+      route = worklist.take
 
       Thread.atomically do
         cost = expand(board, obstructed, depth, route)
@@ -123,20 +158,22 @@ threads = 2.times.map {
         end
 
         lay depth, solution
-        solutions[route] = solution
+        solutions_ractor << [route, solution]
       end
     end
   }
 }
 
-threads.each &:join
+ractors.each &:take
+solutions_ractor.close_incoming
+solutions = solutions_ractor.take
 
 raise 'invalid solution' unless Lee.solution_valid?(board, solutions)
 
 cost, depth = Lee.cost_solutions(board, solutions)
 puts "routes:      #{board.routes.size}"
-puts "committed:   #{$committed}"
-puts "aborted:     #{$aborted}"
+puts "committed:   #{COMMITTED.count}"
+puts "aborted:     #{ABORTED.count}"
 puts "cost:        #{cost}"
 puts "depth:       #{depth}"
 
