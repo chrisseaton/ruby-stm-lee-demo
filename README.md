@@ -46,6 +46,18 @@ cost:        3308
 depth:       3
 ```
 
+To run with ractors, you'll need to merge `thread_tvar` with at least `a99f52d5113a601b6d18bd671dfee24266689ffe` and still apply `instrument-atomically.patch`.
+
+```
+% N=2 bundle exec ruby 7-ractor-tvar-lee.rb inputs/testBoard.txt testBoard.svg
+<internal:ractor>:38: warning: Ractor is experimental, and the behavior may change in future versions of Ruby! Also there are many implementation issues.
+routes:      203
+committed:   203
+aborted:     61
+cost:        3299
+depth:       3
+```
+
 ## Rendering
 
 The SVGs produced aren't very efficient I'm afraid. You may be better off converting them to PNG.
