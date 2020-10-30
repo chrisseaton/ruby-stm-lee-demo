@@ -1,3 +1,5 @@
+require 'set'
+
 module Lee
 
   # A point is a location on the board.
